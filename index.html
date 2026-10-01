@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coursework - Lesson Booking</title>
+  <!-- Vue.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f6f8; }
+    .card { background: #fff; padding: 20px; border-radius: 8px; width: 320px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    button { padding: 8px 14px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background-color: #007bff; color: white; }
+    button:disabled { background-color: #cccccc; cursor: not-allowed; }
+    .lesson-icon { font-size: 40px; color: #007bff; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header class="header-bar">
+      <h1>Lesson Portal</h1>
+      <!-- Task 5: Checkout button showing item count and toggling cart -->
+      <button v-on:click="toggleCart" :disabled="numberOfItems === 0">
+        <i class="fa fa-shopping-cart"></i> Checkout ({{ numberOfItems }})
+      </button>
+    </header>
+
+    <!-- Task 5: v-if / v-else for Lesson view vs Checkout view -->
+    <main v-if="!displayCart">
+      <div class="card">
+        <div class="lesson-icon">
+          <i :class="lesson.icon"></i>
+        </div>
+        <h2>{{ lesson.subject }}</h2>
+        <p><strong>Location:</strong> {{ lesson.location }}</p>
+        <p><strong>Price:</strong> £{{ lesson.price }}</p>
+        <p><strong>Spaces Left:</strong> {{ lesson.availability }}</p>
+
+        <!-- Task 4: Add to Cart button enabled only via canAddToCart -->
+        <button v-on:click="addToCart" :disabled="!canAddToCart">
+          Add to Cart
+        </button>
+      </div>
+    </main>
+
+    <!-- Placeholder Checkout View -->
+    <section v-else class="card">
+      <h2>Shopping Cart / Checkout</h2>
+      <p>Items in Cart: {{ numberOfItems }}</p>
+      <p>Cart Item IDs: {{ cart.join(', ') }}</p>
+    </section>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        displayCart: false,
+        cart: [],
+        lesson: {
+          id: 1001,
+          subject: 'Computer Science',
+          location: 'Hendon, London',
+          price: 95,
+          availability: 5,
+          icon: 'fa fa-code'
+        }
+      },
+      computed: {
+        canAddToCart() {
+          return this.lesson.availability > 0;
+        },
+        numberOfItems() {
+          return this.cart.length;
+        }
+      },
+      methods: {
+        addToCart() {
+          if (this.canAddToCart) {
+            this.cart.push(this.lesson.id);
+            this.lesson.availability--;
+          }
+        },
+        toggleCart() {
+          this.displayCart = !this.displayCart;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
